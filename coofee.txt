@@ -1,0 +1,144 @@
+# CoffeeInventory.py
+import csv
+
+FILE_NAME = "inventory.csv"
+
+# ------------------ CREATE FUNCTION ------------------
+def add_product():
+    with open(FILE_NAME, "a", newline="") as file:
+        writer = csv.writer(file)
+        prod_id = input("Enter Product ID: ")
+        name = input("Enter Drink Name: ")
+        category = input("Enter Category (e.g., Espresso, Cold Brew): ")
+        price = input("Enter Price: ")
+        writer.writerow([prod_id, name, category, price])
+    print("Product added to inventory!\n")
+
+# ------------------ READ FUNCTION ------------------
+def view_inventory():
+    try:
+        with open(FILE_NAME, "r") as file:
+            reader = csv.reader(file)
+            rows = list(reader)
+
+            if not rows:
+                print("Inventory is currently empty.\n")
+                return
+
+            print("\n===== BEAN & BREW INVENTORY =====")
+            print("ID\tName\tCategory\tPrice")
+            for row in rows:
+                print("\t".join(row))
+            print("==================================\n")
+
+    except FileNotFoundError:
+        print("Inventory is currently empty.\n")
+
+# ------------------ SEARCH FUNCTION ------------------
+def search_product():
+    try:
+        prod_id = input("Enter Product ID to search: ")
+        found = False
+
+        with open(FILE_NAME, "r") as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if row[0] == prod_id:
+                    print("Product Found:")
+                    print(f"ID: {row[0]}, Name: {row[1]}, Category: {row[2]}, Price: ${row[3]}\n")
+                    found = True
+                    break
+
+        if not found:
+            print("Product ID not found.\n")
+
+    except FileNotFoundError:
+        print("Inventory is empty.\n")
+
+# ------------------ UPDATE FUNCTION ------------------
+def update_product():
+    try:
+        prod_id = input("Enter Product ID to update: ")
+        updated = False
+        rows = []
+
+        with open(FILE_NAME, "r") as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if row[0] == prod_id:
+                    print(f"Current Name: {row[1]}, Category: {row[2]}, Price: {row[3]}")
+                    row[1] = input("Enter new Drink Name: ")
+                    row[2] = input("Enter new Category: ")
+                    row[3] = input("Enter new Price: ")
+                    updated = True
+                rows.append(row)
+
+        if updated:
+            with open(FILE_NAME, "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerows(rows)
+            print("Inventory updated successfully!\n")
+        else:
+            print("Product not found.\n")
+
+    except FileNotFoundError:
+        print("Inventory is empty.\n")
+
+# ------------------ DELETE FUNCTION ------------------
+def delete_product():
+    try:
+        prod_id = input("Enter Product ID to remove: ")
+        deleted = False
+        rows = []
+
+        with open(FILE_NAME, "r") as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if row[0] == prod_id:
+                    deleted = True
+                    continue
+                rows.append(row)
+
+        if deleted:
+            with open(FILE_NAME, "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerows(rows)
+            print("Product removed from inventory.\n")
+        else:
+            print("Product not found.\n")
+
+    except FileNotFoundError:
+        print("Inventory is empty.\n")
+
+# ------------------ MAIN MENU ------------------
+def main():
+    while True:
+        print("===== COFFEE SHOP KO =====")
+        print("1. Add New Drink")
+        print("2. View Full Menu/Inventory")
+        print("3. Search for a Drink")
+        print("4. Update Drink Details")
+        print("5. Remove Drink from Menu")
+        print("6. Exit")
+        print("=============================")
+
+        choice = input("Select an option: ")
+	
+        if choice == "1":
+            add_product()
+        elif choice == "2":
+            view_inventory()
+        elif choice == "3":
+            search_product()
+        elif choice == "4":
+            update_product()
+        elif choice == "5":
+            delete_product()
+        elif choice == "6":
+            print("Sarado na, Bukas na lng. Balik k mga 9-10 may free donut sa first 10 customers!")
+            break
+        else:
+            print("Malii ung choice mo! Alam m na nga 1-6 lng ehh, nag-input pa ng iba. (kaya pinapapalit ehh hayysss).\n")
+
+if __name__ == "__main__":
+    main()
